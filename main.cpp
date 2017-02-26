@@ -43,13 +43,13 @@ int main (int argc, char** argv) {
     exit(1);
   } else {
     // check neighborhood type
-    if (strcmp(argv[1], "gl")) {
+    if (!strcmp(argv[1], "gl")) {
       neighborhood = GLOBAL_NEIGHBORHOOD_INT;
-    } else if (strcmp(argv[1], "ri")) {
+    } else if (!strcmp(argv[1], "ri")) {
       neighborhood = RING_NEIGHBORHOOD_INT;
-    } else if (strcmp(argv[1], "vn")) {
+    } else if (!strcmp(argv[1], "vn")) {
       neighborhood = VON_NEUMANN_NEIGHBORHOOD_INT;
-    } else if (strcmp(argv[1], "ra")) {
+    } else if (!strcmp(argv[1], "ra")) {
       neighborhood = RANDOM_NEIGHBORHOOD_INT;
     } else {
       cout << "Invalid first argument specifying neighborhood type. Please use:" << endl;
@@ -92,11 +92,11 @@ int main (int argc, char** argv) {
     }
 
     // check optimization function
-    if (strcmp(argv[4], "rok")) {
+    if (!strcmp(argv[4], "rok")) {
       function = ROSENBROCK_FUNCTION_INT;
-    } else if (strcmp(argv[4], "ack")) {
+    } else if (!strcmp(argv[4], "ack")) {
       function = ACKLEY_FUNCTION_INT;
-    } else if (strcmp(argv[4], "ras")) {
+    } else if (!strcmp(argv[4], "ras")) {
       function = RASTRIGIN_FUNCTION_INT;
     } else {
       cout << "Invalid fourth argument specifying optimization function. Please use:" << endl;
