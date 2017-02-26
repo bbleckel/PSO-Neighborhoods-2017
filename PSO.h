@@ -14,9 +14,21 @@
 using namespace std;
 
 class PSO {
-	public:
+public:
+	PSO(string neighborhood, int swarmSize, int iterations, string function, int dimension);
+	~PSO();
+	
+	updateVelocity();
+	updatePosition();
 
-	private:
+private:
+	int swarmSize;
+	int iterations;
+	int dimension;
+	double gBest;
+	double nBest;
+	string neighborhood;
+	string function;
 };
 
 #endif
