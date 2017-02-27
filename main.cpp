@@ -64,6 +64,7 @@ int main (int argc, char** argv) {
 
         // check swarm size
         try {
+            // stoi could throw exception if argv[2] cannot be converted; catch and show error
             size = stoi(argv[2]);
             if (size < 0) {
                 cout << "Invalid second argument specifying swarm size. Swarm cannot have negative size. Please use:" << endl;
@@ -71,6 +72,7 @@ int main (int argc, char** argv) {
                 return 0;
             }
         } catch (invalid_argument&) {
+            // catch invalid_argument error
             cout << "Invalid second argument specifying swarm size. Must be entered as integer value. Please use:" << endl;
             cout << "\tsize = size of swarm (int)" << endl;
             return 0;
