@@ -36,17 +36,18 @@ private:
 	double nBest;
 	string neighborhood;
 	string function;
+	//vector<particle> swarm;
 };
 
 /* particle class */
 class particle {
 public:
-	particle();
+	particle(int dimension);
 	~particle();
 private:
 	double pBest;
-	double velocity;
-	double psoX;
+	vector<double> velocity;
+	double posX;
 	double posY;
 };
 
