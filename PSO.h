@@ -18,8 +18,15 @@ public:
 	PSO(string neighborhood, int swarmSize, int iterations, string function, int dimension);
 	~PSO();
 	
-	updateVelocity();
-	updatePosition();
+	/* veloctiy and position updates */
+	void updateVelocity();
+	void updatePosition();
+	
+	/* initialization */
+	void initializeSwarm();
+	
+	/* general algorithm controller */
+	void solvePSO();
 
 private:
 	int swarmSize;
@@ -29,6 +36,18 @@ private:
 	double nBest;
 	string neighborhood;
 	string function;
+};
+
+/* particle class */
+class particle {
+public:
+	particle();
+	~particle();
+private:
+	double pBest;
+	double velocity;
+	double psoX;
+	double posY;
 };
 
 #endif

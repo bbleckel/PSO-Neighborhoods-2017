@@ -2,6 +2,14 @@
 
 using namespace std;
 
+particle::particle() {
+	
+}
+
+particle::~particle() {
+	
+}
+
 PSO::PSO(string neighborhood, int swarmSize, int iterations, string function, int dimension) {
 	this->neighborhood = neighborhood;
 	this->swarmSize = swarmSize;
@@ -14,10 +22,18 @@ PSO::~PSO() {
 	
 }
 
-PSO::updateVelocity() {
+void PSO::updateVelocity() {
 	
 }
 
-PSO::updatePosition() {
+void PSO::updatePosition() {
 	
+}
+
+void initializeSwarm() {
+	
+}
+
+void solvePSO() {
+	initializeSwarm();
 }
