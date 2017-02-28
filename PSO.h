@@ -13,14 +13,27 @@
 
 using namespace std;
 
+/* particle class */
+class Particle {
+public:
+    Particle(int dimension, int function);
+    ~Particle();
+    
+    vector<double> velocity;
+    vector<double> position;
+    vector<double> pBest;
+private:
+
+};
+
 class PSO {
 public:
-	PSO(string neighborhood, int swarmSize, int iterations, string function, int dimension);
+	PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension);
 	~PSO();
 	
 	/* veloctiy and position updates */
-	void updateVelocity();
-	void updatePosition();
+	void updateVelocity(int index);
+	void updatePosition(int index);
 	
 	/* initialization */
 	void initializeSwarm();
@@ -34,21 +47,9 @@ private:
 	int dimension;
 	double gBest;
 	double nBest;
-	string neighborhood;
-	string function;
-	//vector<particle> swarm;
-};
-
-/* particle class */
-class particle {
-public:
-	particle(int dimension);
-	~particle();
-private:
-	double pBest;
-	vector<double> velocity;
-	double posX;
-	double posY;
+	int neighborhood;
+	int function;
+	vector<Particle> swarm;
 };
 
 #endif

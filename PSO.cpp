@@ -2,24 +2,25 @@
 
 using namespace std;
 
-particle::particle(int dimension) {
-	vector<double> velocity;
-	
+int MAX_VEL_RAND_VALUE[3] = {2, 4, 4};
+int MIN_VEL_RAND_VALUE = -2;
+
+
+Particle::Particle(int dimension, int function) {
 	for (int i = 0; i < dimension; i++) {
-		velocity.push_back((rand() - (RAND_MAX/2)) % 100);
+        // generate random value within specified range for each function
+        double random = (rand() % (MAX_VEL_RAND_VALUE[function] - MIN_VEL_RAND_VALUE + 1)) + MIN_VEL_RAND_VALUE;
+		velocity.push_back(random);
+        pBest.push_back(INT_MAX);
+        position.push_back(rand() % 100);
 	}
-	
-	this->pBest = INT_MAX;
-	this->velocity = velocity;
-	this->posX = rand() % 100;
-	this->posY = rand() % 100;
 }
 
-particle::~particle() {
+Particle::~Particle() {
 	
 }
 
-PSO::PSO(string neighborhood, int swarmSize, int iterations, string function, int dimension) {
+PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension) {
 	this->neighborhood = neighborhood;
 	this->swarmSize = swarmSize;
 	this->iterations = iterations;
@@ -31,27 +32,49 @@ PSO::~PSO() {
 	
 }
 
-void PSO::updateVelocity() {
-	
+void PSO::updateVelocity(int index) {
+    Particle p = swarm[index];
+    // iterate through dimensions, updating respective velocities
+    for(int i = 0; i < dimension; i++) {
+//        double personalAttract =
+        cout << "Particle " << index << " has velocity at dim " << i << " = " << swarm[index].velocity[i] << endl;
+    }
 }
 
-void PSO::updatePosition() {
+void PSO::updatePosition(int index) {
 	
 }
 
 void PSO::initializeSwarm() {
-	vector<particle> swarm;
-	
+    // create swarm of 'swarmSize' particles
 	for (int i = 0; i < swarmSize; i++) {
-		particle particle(dimension);
-		swarm.push_back(particle);
+		Particle newParticle = Particle(dimension, function);
+		swarm.push_back(newParticle);
 	}
-	
-	//this->swarm = swarm;
 }
 
 void PSO::solvePSO() {
 	srand(time(NULL));
 	
 	initializeSwarm();
+    
+    int iterRemaining = iterations;
+    while(iterRemaining >= 0) {
+        // iterate through particles, updating velocity & position
+        for(int i = 0; i < swarmSize; i++) {
+            updateVelocity(i);
+            updatePosition(i);
+        }
+        
+        iterRemaining--;
+    }
+    
+    
+    
+    
+    
 }
+
+
+
+

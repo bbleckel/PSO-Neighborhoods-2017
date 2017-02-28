@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <iostream>
+#include "PSO.h"
 
 using namespace std;
 
@@ -122,6 +123,9 @@ int main (int argc, char** argv) {
         
         
         cout << "Your inputs:\nNeighborhood Type: " << neighborhood << "\nSwarm Size: " << size << "\nIterations: " << iterations << "\nFunction: " << function << "\nDimension: " << dimensions << endl;
+        
+        PSO solver = PSO(neighborhood, size, iterations, function, dimensions);
+        solver.solvePSO();
    
     }
     
