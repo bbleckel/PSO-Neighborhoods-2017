@@ -21,7 +21,10 @@ public:
     
     vector<double> velocity;
     vector<double> position;
+    // pBest stores the *position* of the best value achieved
     vector<double> pBest;
+    // stores the actual value
+    double pBestValue;
 private:
 
 };
@@ -45,7 +48,9 @@ private:
 	int swarmSize;
 	int iterations;
 	int dimension;
-	double gBest;
+    vector<double> gBest;
+    double constrict;
+	double gBestValue;
 	double nBest;
 	int neighborhood;
 	int function;
