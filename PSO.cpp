@@ -14,20 +14,20 @@ Particle::Particle(int dimension, int function) {
 	for (int i = 0; i < dimension; i++) {
         // generate random value within specified range for each function
         double velRandom = (rand() % (MAX_VEL_RAND_VALUE[function] - MIN_VEL_RAND_VALUE + 1)) + MIN_VEL_RAND_VALUE;
-        
+
         double total = MAX_POS_RAND_VALUE[function] - MIN_POS_RAND_VALUE[function];
         double ratio = ((double) rand())/RAND_MAX;
         double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
-        
+
         velocity.push_back(velRandom);
         pBest.push_back(INT_MAX);
         position.push_back(posRandom);
-        
+
 	}
 }
 
 Particle::~Particle() {
-	
+
 }
 
 PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension) {
@@ -37,7 +37,7 @@ PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dime
 	this->function = function;
 	this->dimension = dimension;
     constrict = 0.7298;
-    
+
     for(int i = 0; i < dimension; i++) {
         // fill gBest with random viable values
         double total = MAX_POS_RAND_VALUE[function] - MIN_POS_RAND_VALUE[function];
@@ -48,7 +48,7 @@ PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dime
 }
 
 PSO::~PSO() {
-	
+
 }
 
 void PSO::updateVelocity(int index) {
@@ -67,7 +67,12 @@ void PSO::updateVelocity(int index) {
 }
 
 void PSO::updatePosition(int index) {
-	
+	Particle p = swarm[index];
+	// iterate through dimensions similar to velocity, updating respective positions
+	for(int i = 0; i < dimension; i++) {
+		swarm[index].position[i] += swarm[index].velocity[i];
+	}
+
 }
 
 void PSO::initializeSwarm() {
@@ -80,9 +85,9 @@ void PSO::initializeSwarm() {
 
 void PSO::solvePSO() {
 	srand(time(NULL));
-	
+
 	initializeSwarm();
-    
+
     int iterRemaining = iterations;
     while(iterRemaining >= 0) {
         // iterate through particles, updating velocity & position
@@ -90,12 +95,8 @@ void PSO::solvePSO() {
             updateVelocity(i);
             updatePosition(i);
         }
-        
+
         iterRemaining--;
     }
-    
+
 }
-
-
-
-
