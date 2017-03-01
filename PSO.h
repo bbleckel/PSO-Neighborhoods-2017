@@ -38,6 +38,13 @@ public:
 	void updateVelocity(int index);
 	void updatePosition(int index);
 	
+	/* function evaluation */
+	void eval();
+	double rosenbrock(Particle x);
+	double ackley(Particle x);
+	double rastrigin(Particle x);
+	void updateNeighborhoodBest(double currVal, Particle x);
+	
 	/* initialization */
 	void initializeSwarm();
 	
@@ -45,6 +52,10 @@ public:
 	void solvePSO();
 
 private:
+	const static int ROSENBROCK_FUNCTION_INT = 0;
+	const static int ACKLEY_FUNCTION_INT = 1;
+	const static int RASTRIGIN_FUNCTION_INT = 2;
+	
 	int swarmSize;
 	int iterations;
 	int dimension;

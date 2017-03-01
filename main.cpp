@@ -14,6 +14,7 @@ int ROSENBROCK_FUNCTION_INT = 0;
 int ACKLEY_FUNCTION_INT = 1;
 int RASTRIGIN_FUNCTION_INT = 2;
 
+
 void printInfo() {
     cout << endl;
     cout << "Usage:\nFor Particle Swarm Optimization:\n./main neighborhood size iterations function dimensions" << endl;
