@@ -52,7 +52,7 @@ public:
 	double rosenbrock(Particle x);
 	double ackley(Particle x);
 	double rastrigin(Particle x);
-	void updateNeighborhoodBest(double currVal, Particle x);
+	void updateNeighborhoodBest();
 	
 	/* initialization */
 	void initializeSwarm();
