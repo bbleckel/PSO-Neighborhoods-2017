@@ -233,6 +233,19 @@ void PSO::initializeNeighborhoods() {
 	}
 }
 
+void PSO::updateNeighborhoodBest() {
+	for (int i = 0; i < neighborhoods.size(); i++) {
+		int best = gBest.at(i);
+		for (int j = 0; j < neighborhoods.at(i).size(); j++) {
+			int index = neighborhoods.at(i).at(j);
+			if (swarm.at(index).pBestValue < best) {
+				gBest.at(i) = swarm.at(index).pBestValue;
+				best = gBest.at(i);
+			}
+		}
+	}
+}
+
 // Evaluation controller
 void PSO::eval() {
 	for (int i = 0; i < swarmSize; i++) {
@@ -254,20 +267,6 @@ void PSO::eval() {
 	}
 	
 	updateNeighborhoodBest();
-}
-
-/* NEEDS TO BE WRITTEN */
-void PSO::updateNeighborhoodBest() {
-	for (int i = 0; i < neighborhoods.size(); i++) {
-		int best = gBest.at(i);
-		for (int j = 0; j < neighborhoods.at(i).size(); j++) {
-			int index = neighborhoods.at(i).at(j);
-			if (swarm.at(index).pBestValue < best) {
-				gBest.at(i) = swarm.at(index).pBestValue;
-				best = gBest.at(i);
-			}
-		}
-	}
 }
 
 void PSO::initializeSwarm() {
