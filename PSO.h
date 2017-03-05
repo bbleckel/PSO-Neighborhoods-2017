@@ -73,13 +73,17 @@ private:
 	int swarmSize;
 	int iterations;
 	int dimension;
+    // position of all-time best particle?
     vector<double> gBest;
+    vector<double> nBestList;
     double constrict;
 	double gBestValue;
 	double nBest;
 	int neighborhood;
 	int function;
 	vector<Particle> swarm;
+    // neighborhoods consists of integers representing particles
+    // in the swarm (values are indices)
 	vector<vector<int> > neighborhoods;
 };
 
