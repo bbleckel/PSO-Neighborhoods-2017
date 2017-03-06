@@ -18,7 +18,7 @@ class Particle {
 public:
     Particle(int dimension, int function);
     ~Particle();
-    
+
     vector<double> velocity;
     vector<double> position;
     // pBest stores the *position* of the best value achieved
@@ -33,11 +33,11 @@ class PSO {
 public:
 	PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension);
 	~PSO();
-	
+
 	/* veloctiy and position updates */
 	void updateVelocity(int index);
 	void updatePosition(int index);
-	
+
 	/* neighborhoods */
 	void initializeNeighborhoods();
 	void global();
@@ -46,30 +46,33 @@ public:
 	void initializeRandomNeighborhood();
 	void updateRandomNeighborhood();
 	int getNewRandIndex(int i);
-	
+
 	/* function evaluation */
 	void eval();
 	double rosenbrock(Particle x);
 	double ackley(Particle x);
 	double rastrigin(Particle x);
 	void updateNeighborhoodBest();
-	
+
 	/* initialization */
 	void initializeSwarm();
-	
+
 	/* general algorithm controller */
 	void solvePSO();
+
+  // need to be able to access this from the tester
+  double gBestValue;
 
 private:
 	const static int GLOBAL_NEIGHBORHOOD_INT = 0;
 	const static int RING_NEIGHBORHOOD_INT = 1;
 	const static int VON_NEUMANN_NEIGHBORHOOD_INT = 2;
 	const static int RANDOM_NEIGHBORHOOD_INT = 3;
-	
+
 	const static int ROSENBROCK_FUNCTION_INT = 0;
 	const static int ACKLEY_FUNCTION_INT = 1;
 	const static int RASTRIGIN_FUNCTION_INT = 2;
-	
+
 	int swarmSize;
 	int iterations;
 	int dimension;
@@ -80,7 +83,6 @@ private:
     // nBestList holds the actual values 
     vector<double> nBestList;
     double constrict;
-	double gBestValue;
 	double nBest;
 	int neighborhood;
 	int function;
