@@ -31,6 +31,8 @@ Particle::~Particle() {
 	
 }
 
+
+
 PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension) {
 	this->neighborhood = neighborhood;
 	this->swarmSize = swarmSize;
@@ -47,6 +49,22 @@ PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dime
 		double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
 		gBest.push_back(posRandom);
 	}
+    
+    for(int i = 0; i < swarmSize; i++) {
+        vector<double> position;
+        for(int j = 0; j < dimension; j++) {
+            position.clear();
+            double total = MAX_POS_RAND_VALUE[function] - MIN_POS_RAND_VALUE[function];
+            double ratio = ((double) rand())/RAND_MAX;
+            double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
+            position.push_back(posRandom);
+            
+            
+        }
+        nBestPos.push_back(position);
+        nBestList.push_back(INT_MAX);
+    }
+    
 }
 
 PSO::~PSO() {
@@ -59,8 +77,8 @@ void PSO::updateVelocity(int index) {
 	for(int i = 0; i < dimension; i++) {
 		double pAttract = ((double) rand()/RAND_MAX) * PHI_1 * (swarm[index].pBest[i] - swarm[index].position[i]);
 		//cout << swarm[index].pBest[i] << endl;
-		double gAttract = ((double) rand()/RAND_MAX) * PHI_2 * (gBest[i] - swarm[index].position[i]);
-		double velChange = pAttract + gAttract;
+		double nAttract = ((double) rand()/RAND_MAX) * PHI_2 * (nBestPos[index][i] - swarm[index].position[i]);
+		double velChange = pAttract + nAttract;
 		swarm[index].velocity[i] += velChange;
 		swarm[index].velocity[i] *= constrict;
 		
@@ -192,7 +210,7 @@ void PSO::vonNeumann() {
         int row = floor(index / rowSize);
         int col = index - (row * rowSize);
         
-        cout << index << " has coordinates (" << row << ", " << col << ")" << endl;
+//        cout << index << " has coordinates (" << row << ", " << col << ")" << endl;
         
         // determine coordinates of neighbors
         int neighborUpRow;
@@ -243,6 +261,7 @@ void PSO::vonNeumann() {
         int neighborRight = rowSize * neighborRightRow + neighborLeftCol;
         
         // add each neighbor to neighborhood
+        tempNeighborhood.push_back(index);
         tempNeighborhood.push_back(neighborUp);
         tempNeighborhood.push_back(neighborDown);
         tempNeighborhood.push_back(neighborLeft);
@@ -325,20 +344,17 @@ void PSO::initializeNeighborhoods() {
 	} else {
 		global();
 	}
-    
-    for(int i = 0; i < neighborhoods.size(); i++) {
-        nBestList.push_back(INT_MAX);
-    }
 }
 
 void PSO::updateNeighborhoodBest() {
     // iterate through neighborhoods, updating bests
-	for (int i = 0; i < neighborhoods.size(); i++) {
+	for (int i = 0; i < swarmSize; i++) {
 		for (int j = 0; j < neighborhoods[i].size(); j++) {
 			int index = neighborhoods[i][j];
 			if (swarm[index].pBestValue < nBestList[i]) {
                 // if particle's value better than neighborhood best, replace
                 nBestList[i] = swarm[index].pBestValue;
+//                nBestPos[i]
 			}
 		}
 	}

@@ -75,6 +75,9 @@ private:
 	int dimension;
     // position of all-time best particle?
     vector<double> gBest;
+    // nBestList is 2D vector: the particle, and the position of its neighborhood best
+    vector< vector<double> > nBestPos;
+    // nBestList holds the actual values 
     vector<double> nBestList;
     double constrict;
 	double gBestValue;
