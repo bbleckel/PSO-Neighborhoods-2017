@@ -25,8 +25,27 @@ public:
     vector<double> pBest;
     // stores the actual value
     double pBestValue;
-private:
+    // ID allows indexing into PSO's neighborhoodList
+    int neighborhoodID;
 
+};
+
+class Neighborhood {
+public:
+    static int IDCounter;
+    
+    Neighborhood(int function, int dimension);
+    ~Neighborhood();
+    void add(Particle &x);
+    void updateBest();
+    
+    vector<double> bestPos;
+    vector<Particle*> neighborhood;
+
+    double bestValue;
+    int size;
+    int ID;
+    int function;
 };
 
 class PSO {
@@ -48,7 +67,7 @@ public:
 	int getNewRandIndex(int i);
 	
 	/* function evaluation */
-	void eval();
+    void eval(int index);
 	double rosenbrock(Particle x);
 	double ackley(Particle x);
 	double rastrigin(Particle x);
@@ -75,7 +94,9 @@ private:
 	int dimension;
     // position of all-time best particle?
     vector<double> gBest;
-    vector<double> nBestList;
+    
+    vector<Neighborhood> neighborhoodList;
+    
     double constrict;
 	double gBestValue;
 	double nBest;

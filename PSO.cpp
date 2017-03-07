@@ -9,6 +9,8 @@ double MIN_POS_RAND_VALUE[3] = {15.0, 16.0, 2.56};
 double PHI_1 = 2.05;
 double PHI_2 = 2.05;
 
+int Neighborhood::IDCounter;
+
 Particle::Particle(int dimension, int function) {
     pBestValue = INT_MAX;
 
@@ -31,6 +33,42 @@ Particle::~Particle() {
 	
 }
 
+Neighborhood::Neighborhood(int function, int dimension) {
+    size = 0;
+    bestValue = INT_MAX;
+    this->function = function;
+    ID = IDCounter;
+    IDCounter++;
+    
+    for(int i = 0; i < dimension; i++) {
+        double total = MAX_POS_RAND_VALUE[function] - MIN_POS_RAND_VALUE[function];
+        double ratio = ((double) rand())/RAND_MAX;
+        double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
+        bestPos.push_back(posRandom);
+    }
+}
+
+Neighborhood::~Neighborhood() {
+    
+}
+
+void Neighborhood::add(Particle &x) {
+//    cout << "Giving particle neighborhood " << ID << endl;
+    x.neighborhoodID = ID;
+    neighborhood.push_back(&x);
+    size++;
+}
+
+void Neighborhood::updateBest() {
+    for (int i = 0; i < size; i++) {
+        if (neighborhood[i]->pBestValue < bestValue) {
+            // if particle's value better than neighborhood best, replace
+            bestValue = neighborhood[i]->pBestValue;
+            bestPos = neighborhood[i]->pBest;
+        }
+    }
+}
+
 PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dimension) {
 	this->neighborhood = neighborhood;
 	this->swarmSize = swarmSize;
@@ -47,6 +85,19 @@ PSO::PSO(int neighborhood, int swarmSize, int iterations, int function, int dime
 		double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
 		gBest.push_back(posRandom);
 	}
+    
+    for(int i = 0; i < swarmSize; i++) {
+        vector<double> position;
+        for(int j = 0; j < dimension; j++) {
+            position.clear();
+            double total = MAX_POS_RAND_VALUE[function] - MIN_POS_RAND_VALUE[function];
+            double ratio = ((double) rand())/RAND_MAX;
+            double posRandom = total * ratio + MIN_POS_RAND_VALUE[function];
+            position.push_back(posRandom);
+            
+            
+        }
+    }
 }
 
 PSO::~PSO() {
@@ -57,13 +108,16 @@ void PSO::updateVelocity(int index) {
 	Particle p = swarm[index];
 	// iterate through dimensions, updating respective velocities
 	for(int i = 0; i < dimension; i++) {
+        // attraction from personal best
 		double pAttract = ((double) rand()/RAND_MAX) * PHI_1 * (swarm[index].pBest[i] - swarm[index].position[i]);
-		//cout << swarm[index].pBest[i] << endl;
-		double gAttract = ((double) rand()/RAND_MAX) * PHI_2 * (gBest[i] - swarm[index].position[i]);
-		double velChange = pAttract + gAttract;
+
+        // get this particle's neighborhood best
+        vector<double> partBestPosition = neighborhoodList[p.neighborhoodID].bestPos;
+        // attraction from neighborhood best
+		double nAttract = ((double) rand()/RAND_MAX) * PHI_2 * (partBestPosition[i] - swarm[index].position[i]);
+		double velChange = pAttract + nAttract;
 		swarm[index].velocity[i] += velChange;
 		swarm[index].velocity[i] *= constrict;
-		
 	}
 }
 
@@ -90,34 +144,37 @@ double PSO::rosenbrock(Particle x) {
 
 // Ackley function evaluation for particle x
 double PSO::ackley(Particle x) {
+    
 	double val = 0;
 	//values need to be changed to reflect our choices
 	double a = 20.0;
 	double b = 0.2;
-	double c = 2*M_PI;
+	double c = 2 * M_PI;
 	
 	double squaredSum = 0;
 	for (int i = 0; i < dimension; i++)
 		squaredSum += pow(x.position[i],2);
-	
+    
 	double cosSum = 0;
 	for (int i = 0; i < dimension; i++)
-		cosSum += cos(c*x.position[i]);
+		cosSum += cos(c * x.position[i]);
+    
+	// carefully combine terms -- prone to strange arithmetic error
+    double first = -a * exp(-b * sqrt(squaredSum / dimension));
+    double second = exp(cosSum / dimension);
+    double third = a + exp(1);
+
 	
-	//go through three terms of ackley function
-	val += (-a) * exp(-b * sqrt((1 / dimension) * squaredSum));
-	val -= exp((1 / dimension) * cosSum);
-	val += a + exp(1);
-	
-	return val;
+	return first - second + third;
+     
 }
 
 // Rastrigin function evaluation for particle x
 double PSO::rastrigin(Particle x) {
-	double val = 10*dimension;
+	double val = 10 * dimension;
 	
 	for (int i = 0; i < dimension; i++)
-		val += (pow(x.position[i],2) - 10*cos(2*M_PI*x.position[i]));
+		val += (pow(x.position[i],2) - 10 * cos(2 * M_PI * x.position[i]));
 	
 	return val;
 }
@@ -129,18 +186,21 @@ double PSO::rastrigin(Particle x) {
 void PSO::global() {
     // add every particle to a single neighborhood
     for(int i = 0; i < swarmSize; i++) {
-        vector<int> x;
-        for (int j = 0; j < swarmSize; j++)
-            x.push_back(j);
-        neighborhoods.push_back(x);
+        Neighborhood temp(function, dimension);
+        for (int j = 0; j < swarmSize; j++) {
+            temp.add(swarm[j]);
+//            cout << "Setting particle " << j << " to ID " << i << endl;
+            swarm[j].neighborhoodID = i;
+        }
+        neighborhoodList.push_back(temp);
     }
 }
 
 // Ring neighborhood initialization
 void PSO::ring() {
+
 	for (int i = 0; i < swarmSize; i++) {
-		vector<int> x;
-		neighborhoods.push_back(x);
+        Neighborhood temp(function, dimension);
 		int before;
 		int after;
 		if (i == 0) {
@@ -157,9 +217,11 @@ void PSO::ring() {
 			after = i + 1;
 		}
         
-		neighborhoods[i].push_back(before);
-		neighborhoods[i].push_back(i);
-		neighborhoods[i].push_back(after);
+        temp.add(swarm[before]);
+        temp.add(swarm[i]);
+        temp.add(swarm[after]);
+        
+        neighborhoodList.push_back(temp);
 	}
 }
 
@@ -186,14 +248,12 @@ void PSO::vonNeumann() {
     cout << "Using rowSize " << rowSize << endl;
     
     for(int index = 0; index < swarmSize; index++) {
-        vector<int> tempNeighborhood;
+        Neighborhood temp(function, dimension);
         
         // note: (x, y) = (row, col) (in conceptual grid)
         int row = floor(index / rowSize);
         int col = index - (row * rowSize);
-        
-        cout << index << " has coordinates (" << row << ", " << col << ")" << endl;
-        
+                
         // determine coordinates of neighbors
         int neighborUpRow;
         int neighborUpCol;
@@ -242,13 +302,15 @@ void PSO::vonNeumann() {
         int neighborLeft = rowSize * neighborLeftRow + neighborLeftCol;
         int neighborRight = rowSize * neighborRightRow + neighborLeftCol;
         
-        // add each neighbor to neighborhood
-        tempNeighborhood.push_back(neighborUp);
-        tempNeighborhood.push_back(neighborDown);
-        tempNeighborhood.push_back(neighborLeft);
-        tempNeighborhood.push_back(neighborRight);
         
-        neighborhoods.push_back(tempNeighborhood);
+        // add each neighbor to neighborhood
+        temp.add(swarm[index]);
+        temp.add(swarm[neighborUp]);
+        temp.add(swarm[neighborDown]);
+        temp.add(swarm[neighborLeft]);
+        temp.add(swarm[neighborRight]);
+        
+        neighborhoodList.push_back(temp);
     }
     
     // DEAL WITH NON-SQUARE NUMBERS?
@@ -316,6 +378,8 @@ int PSO::getNewRandIndex(int i) {
 
 // Neighborhood initialization controller
 void PSO::initializeNeighborhoods() {
+    Neighborhood::IDCounter = 0;
+    
 	if (neighborhood == RANDOM_NEIGHBORHOOD_INT) {
 		initializeRandomNeighborhood();
 	} else if (neighborhood == RING_NEIGHBORHOOD_INT) {
@@ -325,51 +389,39 @@ void PSO::initializeNeighborhoods() {
 	} else {
 		global();
 	}
-    
-    for(int i = 0; i < neighborhoods.size(); i++) {
-        nBestList.push_back(INT_MAX);
-    }
 }
 
 void PSO::updateNeighborhoodBest() {
     // iterate through neighborhoods, updating bests
-	for (int i = 0; i < neighborhoods.size(); i++) {
-		for (int j = 0; j < neighborhoods[i].size(); j++) {
-			int index = neighborhoods[i][j];
-			if (swarm[index].pBestValue < nBestList[i]) {
-                // if particle's value better than neighborhood best, replace
-                nBestList[i] = swarm[index].pBestValue;
-			}
-		}
-	}
+    
+    for(int i = 0; i < swarmSize; i++) {
+        // update each particle's neighborhood
+        neighborhoodList[swarm[i].neighborhoodID].updateBest();
+    }
 }
 
 // Evaluation controller
-void PSO::eval() {
-	for (int i = 0; i < swarmSize; i++) {
-		double pVal;
-		
-		Particle x = swarm[i];
-		
-		if (function == ROSENBROCK_FUNCTION_INT)
-			pVal = rosenbrock(x);
-		else if (function == ACKLEY_FUNCTION_INT)
-			pVal = ackley(x);
-		else
-			pVal = rastrigin(x);
-		
-		if (pVal < x.pBestValue) {
-			swarm[i].pBest = x.position;
-			swarm[i].pBestValue = pVal;
-		}
-        
-        if(pVal < gBestValue) {
-            gBestValue = pVal;
-            gBest = x.pBest;
-        }
-	}
-	
-	updateNeighborhoodBest();
+void PSO::eval(int index) {
+    Particle p = swarm[index];
+    double pVal;
+    
+    if (function == ROSENBROCK_FUNCTION_INT)
+        pVal = rosenbrock(p);
+    else if (function == ACKLEY_FUNCTION_INT)
+        pVal = ackley(p);
+    else
+        pVal = rastrigin(p);
+    
+    if (pVal < p.pBestValue) {
+        swarm[index].pBest = p.position;
+        swarm[index].pBestValue = pVal;
+    }
+    
+    if(pVal < gBestValue) {
+        gBestValue = pVal;
+        gBest = p.pBest;
+    }
+    updateNeighborhoodBest();
 }
 
 void PSO::initializeSwarm() {
@@ -381,12 +433,30 @@ void PSO::initializeSwarm() {
 }
 
 void PSO::solvePSO() {
-    
 	srand(time(NULL));
+    
+//    Particle p(dimension, function);
+//    Particle p1(dimension, function);
+//
+//    for(int i = 0; i < dimension; i++) {
+//        p.position[i] = 0;
+//        p1.position[i] = 1;
+//    }
+//    
+//    
+//    double value1 = ackley(p);
+//    cout << value1 << endl;
+//    double value2 = rosenbrock(p1);
+//    cout << value2 << endl;
+//    double value3 = rastrigin(p);
+//    cout << value3 << endl;
+//    return;
 	
 	initializeSwarm();
 	initializeNeighborhoods();
-	
+
+    // PROBLEM: PARTICLE CAN'T BE IN MULTIPLE NEIGHBORHOODS
+    
 	int iterRemaining = iterations;
 
 	while(iterRemaining >= 0) {
@@ -394,21 +464,17 @@ void PSO::solvePSO() {
 
 		// iterate through particles, updating velocity & position
 		for(int i = 0; i < swarmSize; i++) {
-            
 			updateVelocity(i);
 			updatePosition(i);
-			// evaluate at new position
-
+            // evaluate at position
+            eval(i);
 		}
         
-        eval();
+        
         if (neighborhood == RANDOM_NEIGHBORHOOD_INT) {
             updateRandomNeighborhood();
         }
-
         
 		iterRemaining--;
-
 	}
-	
 }
