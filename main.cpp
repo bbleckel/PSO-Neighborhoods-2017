@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <iostream>
+#include <algorithm>
 #include "PSO.h"
 
 using namespace std;
@@ -33,6 +34,90 @@ void printInfo() {
     cout << endl;
 }
 
+bool compare(double i, double j) {return (i < j); }
+
+void testCases() {
+    int neighborhood[4] = {GLOBAL_NEIGHBORHOOD_INT, RING_NEIGHBORHOOD_INT, VON_NEUMANN_NEIGHBORHOOD_INT, RANDOM_NEIGHBORHOOD_INT};
+    string strNeighborhood[4] = {"Global", "Ring", "von Neumann", "Random"};
+    int swarmSize[3] = {10, 20, 50};
+    int vnSwarmSize[3] = {16, 30, 49};
+    int iterations = 10000;
+    int function[3] = {ROSENBROCK_FUNCTION_INT, ACKLEY_FUNCTION_INT, RASTRIGIN_FUNCTION_INT};
+    string strFunction[3] = {"Rosenbrock", "Ackley", "Rastrigin"};
+    int dimensions = 30;
+    
+    // vary neighborhood type
+    for(int n = 0; n < 4; n++) {
+        
+        // vary swarm size
+        for(int s = 0; s < 3; s++) {
+            
+            // vary function
+            for(int f = 0; f < 3; f++) {
+                
+                vector<double> gBestVect;
+                
+                // von Neumann, use vnSwarmSize
+                if(neighborhood[n] == VON_NEUMANN_NEIGHBORHOOD_INT) {
+                    
+                    // run 20 times
+                    for(int j = 0; j < 20; j++) {
+                        cout << "Run " << j+1 << " of 20" << endl;
+                        cout << "Test inputs:\nNeighborhood Type: " << strNeighborhood[n] << "\nSwarm Size: " << vnSwarmSize[s] << "\nIterations: " <<
+                        iterations << "\nFunction: " << function[f] << "\nDimension: " << dimensions << endl;
+                        
+                        PSO solver = PSO(neighborhood[n], vnSwarmSize[s], iterations, function[f], dimensions);
+                        solver.solvePSO();
+                        gBestVect.push_back(solver.gBestValue);
+                        cout << endl;
+                    }
+                    
+                    // not von Neumann, use swarmSize
+                } else {
+                    // run 20 times
+                    for(int j = 0; j < 20; j++) {
+                        cout << "Run " << j+1 << " of 20" << endl;
+                        cout << "Test inputs:\nNeighborhood Type: " << strNeighborhood[n] << "\nSwarm Size: " << swarmSize[s] << "\nIterations: " <<
+                        iterations << "\nFunction: " << strFunction[f] << "\nDimension: " << dimensions << endl;
+                        
+                        PSO solver = PSO(neighborhood[n], swarmSize[s], iterations, function[f], dimensions);
+                        solver.solvePSO();
+                        gBestVect.push_back(solver.gBestValue);
+                        cout << endl;
+                    }
+                    
+                }
+                
+                // do things with the gBestVect here
+                
+                // print the list before sorting
+                cout << "Before sorting: ";
+                for(int i = 0; i < gBestVect.size(); i++) {
+                    cout << gBestVect[i] << "  ";
+                }
+                cout << endl;
+                
+                // sort the list
+                sort(gBestVect.begin(), gBestVect.end(), compare);
+                
+                // print the list after sorting
+                cout << "After sorting: ";
+                for(int i = 0; i < gBestVect.size(); i++) {
+                    cout << gBestVect[i] << "  ";
+                }
+                cout << endl;
+                
+                cout << "Median: " << gBestVect[10] << endl;
+                
+                
+            }
+            
+        }
+        
+    }
+    
+}
+
 int main (int argc, char** argv) {
     int neighborhood;
     int size;
@@ -63,7 +148,7 @@ int main (int argc, char** argv) {
             cout << "                      ra = random; random neighborhoods created for each particle, changed on each iteration with probability 0.2" << endl;
             exit(1);
         }
-
+        
         // check swarm size
         try {
             // stoi could throw exception if argv[2] cannot be converted; catch and show error
@@ -123,11 +208,19 @@ int main (int argc, char** argv) {
         }
         
         
-        cout << "Your inputs:\nNeighborhood Type: " << neighborhood << "\nSwarm Size: " << size << "\nIterations: " << iterations << "\nFunction: " << function << "\nDimension: " << dimensions << endl;
+        //    testCases();
+        // use this instead of the following to iterate through test cases rather than run
+        // the algorithm for the specified input
         
+        
+        // cout << "Your inputs:\nNeighborhood Type: " << neighborhood << "\nSwarm Size: " << size << "\nIterations: " << iterations << "\nFunction: " << function << "\nDimension: " << dimensions << endl;
+        //
         PSO solver = PSO(neighborhood, size, iterations, function, dimensions);
         solver.solvePSO();
-   
+        
+        
+        
+        
     }
     
 }
