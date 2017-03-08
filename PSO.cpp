@@ -67,24 +67,12 @@ void Neighborhood::add(Particle &x) {
 
 void Neighborhood::updateBest() {
     for (int i = 0; i < size; i++) {
-      cout << "number " << i << " in neighborhood" << endl;
 
         if (neighborhood[i]->pBestValue < bestValue) {
-            cout << "updating bestValue from " << i << endl;
             // if particle's value better than neighborhood best, replace
-            cout << "previous: " << bestValue << endl;
             bestValue = neighborhood[i]->pBestValue;
-            cout << "new: " << bestValue << endl;
-            cout << "a" << endl;
 
-            // TODO this is where it's stuck
-            cout << "updating bestPos from " << i << endl;
-            // seems like it's having a problem getting the best position from this
-            // neighbor. It's the neighborUp, so it has wrapped around to the bottom,
-            // but this was not a problem for previous ones, and is not a problem for 
-            // square swarms, so not really sure what's up here
             bestPos = neighborhood[i]->pBest;
-            cout << "b" << endl;
         }
     }
 }
@@ -360,13 +348,11 @@ void PSO::vonNeumann() {
 // Random neighborhood initialization
 void PSO::initializeRandomNeighborhood() {
 	int k = 5;
-    cout << "Here!" << endl;
 
 	for (int i = 0; i < swarmSize; i++) {
         Neighborhood temp(function, dimension);
         // particle is in its own neighborhood
         temp.add(swarm[i]);
-        cout << i << endl;
 		for (int j = 0; j < k - 1; j++) {
 			// get non-duplicate index
 			int randIndex = getNewRandIndex(temp);
@@ -439,10 +425,8 @@ void PSO::initializeNeighborhoods() {
 void PSO::updateNeighborhoodBest() {
     // iterate through neighborhoods, updating bests
     for(int i = 0; i < swarmSize; i++) {
-        cout << i << "a" << endl;
         // update each particle's neighborhood
         neighborhoodList[i].updateBest();
-        cout << i << "b" << endl;
     }
 }
 
