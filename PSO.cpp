@@ -268,14 +268,14 @@ int findNextSquare(int i) {
 
 // von Neumann neighborhood initialization
 void PSO::vonNeumann() {
-  // CURRENTLY DANGEROUS FOR NON-SQUARE #'S
 
   // particles as parts of a grid: neighborhood is adjacent particles (up, down, left, right)
 
+  // finds a valid column and row size to make the most square rectangle of individuals as possible
   int rowSize = sqrt(findNextSquare(swarmSize));
   int colSize;
   bool rectFound = false;
-
+  // looks at each square above the swarmSize and sees if it is divisible (valid)
   while(rectFound == false) {
     if(swarmSize % rowSize == 0) {
       colSize = swarmSize / rowSize;
@@ -285,7 +285,7 @@ void PSO::vonNeumann() {
     }
   }
 
-  cout << "Using rowSize " << rowSize << endl;
+  // cout << "Using rowSize " << rowSize << endl;
   for(int index = 0; index < swarmSize; index++) {
     Neighborhood temp(function, dimension);
     // note: (x, y) = (row, col) (in conceptual grid)
@@ -350,9 +350,6 @@ void PSO::vonNeumann() {
 
     neighborhoodList.push_back(temp);
   }
-
-
-  // DEAL WITH NON-SQUARE NUMBERS?
 
 }
 
