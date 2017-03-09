@@ -273,7 +273,12 @@ void PSO::vonNeumann() {
 	// particles as parts of a grid: neighborhood is adjacent particles (up, down, left, right)
 
     int rowSize = sqrt(findNextSquare(swarmSize));
-
+	int colSize;
+	if (swarmSize == 30)
+		colSize = 5;
+	else
+		colSize = rowSize;
+	
     cout << "Using rowSize " << rowSize << endl;
     for(int index = 0; index < swarmSize; index++) {
         Neighborhood temp(function, dimension);
@@ -293,9 +298,9 @@ void PSO::vonNeumann() {
 
         if(row == 0) {
             // wrap up
-            neighborUpRow = rowSize - 1;
+            neighborUpRow = colSize - 1;
             neighborDownRow = row + 1;
-        } else if(row == rowSize - 1) {
+        } else if(row == colSize - 1) {
             // wrap down
             neighborUpRow = row - 1;
             neighborDownRow = 0;
