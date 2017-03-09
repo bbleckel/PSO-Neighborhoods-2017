@@ -208,15 +208,15 @@ int main (int argc, char** argv) {
         }
 
 
-          //  testCases();
+           testCases();
         // use this instead of the following to iterate through test cases rather than run
         // the algorithm for the specified input
 
 
-        cout << "Your inputs:\nNeighborhood Type: " << neighborhood << "\nSwarm Size: " << size << "\nIterations: " << iterations << "\nFunction: " << function << "\nDimension: " << dimensions << endl;
-
-        PSO solver = PSO(neighborhood, size, iterations, function, dimensions);
-        solver.solvePSO();
+        // cout << "Your inputs:\nNeighborhood Type: " << neighborhood << "\nSwarm Size: " << size << "\nIterations: " << iterations << "\nFunction: " << function << "\nDimension: " << dimensions << endl;
+        //
+        // PSO solver = PSO(neighborhood, size, iterations, function, dimensions);
+        // solver.solvePSO();
 
 
 
