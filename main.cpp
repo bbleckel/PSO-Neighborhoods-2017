@@ -61,7 +61,7 @@ void testCases() {
 		for(int s = 0; s < 3; s++) {
 
 			// vary function
-			for(int f = 0; f < 1; f++) {
+			for(int f = 0; f < 3; f++) {
 
 				vector<tests> gBestVect;
 				//cout << "Test inputs:\nNeighborhood Type: " << strNeighborhood[n] << "\nSwarm Size: " << swarmSize[s] << "\nIterations: " << iterations << "\nFunction: " << strFunction[f] << "\nDimension: " << dimensions << endl;
