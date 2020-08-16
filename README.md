@@ -1,9 +1,9 @@
-PSO
+# PSO (Particle Swarm Optimization)
 By: Bo Bleckel, Jasper Houston, and Dylan Parsons
 Nature Inspired Computation - CSCI 3445
 Bowdoin College
 
-/* This program is implemented in C++ */
+This program is implemented in C++
 
 This program solves optimization problems using a particle swarm optimization approach.
 The goal of the program is to compare four neighborhood topologies: Global, Ring, von Neumann, and Random.
@@ -11,6 +11,7 @@ The four topologies are explained in depth in the included paper entitled PSO.pd
 The main.cpp file deals with executing the file and parsing the command line arguments.
 The command line arguments are as follows, in the order presented:
 
+### Instructions
 For Particle Swarm Optimization:
 ./main neighborhood size iterations function dimensions
     neighborhood   = which neighborhood topology to test (string):
