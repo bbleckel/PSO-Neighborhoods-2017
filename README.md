@@ -3,7 +3,9 @@ By: Bo Bleckel, Jasper Houston, and Dylan Parsons
 Nature Inspired Computation - CSCI 3445
 Bowdoin College
 
-This program is implemented in C++
+This program is implemented in C++.
+
+Writeup can be found at [PSO.pdf](PSO.pdf)
 
 This program solves optimization problems using a particle swarm optimization approach.
 The goal of the program is to compare four neighborhood topologies: Global, Ring, von Neumann, and Random.
